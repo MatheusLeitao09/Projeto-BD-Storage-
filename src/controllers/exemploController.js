@@ -2,7 +2,7 @@ import ExemploModel from '../models/ExemploModel.js';
 
 export const criar = async (req, res) => {
     try {
-        if (!req.body) {
+        if (!req.body || Object.keys(req.body).length === 0) {
             return res.status(400).json({ error: 'Corpo da requisição vazio. Envie os dados!' });
         }
 
@@ -11,7 +11,7 @@ export const criar = async (req, res) => {
         if (!nome){
             return res.status(400).json({ error: 'O campo "nome" é obrigatório!' });
         }
-        
+
 
         const exemplo = new ExemploModel({ nome, estado: estado !== undefined ? Boolean(estado) : true,
             preco: preco ? parseFloat(preco) : null});

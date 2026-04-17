@@ -18,10 +18,10 @@ export default class ExemploModel {
         });
     }
 
-    async atualizar() {
+    static async atualizar(id, dados) {
         return prisma.exemplo.update({
-            where: { id: this.id },
-            data: { nome: this.nome, estado: this.estado, preco: this.preco },
+            where: { id: parseInt(id) },
+            data: dados
         });
     }
 
