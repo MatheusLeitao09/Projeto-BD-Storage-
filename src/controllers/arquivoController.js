@@ -45,6 +45,7 @@ const buscarArquivo = (tipo) => async (req, res) => {
 
         const exemplo = await ExemploModel.buscarPorId(parseInt(id));
 
+
         if (!exemplo) return res.status(404).json({ error: 'Registro não encontrado.' });
 
         if (!exemplo[tipo]) return res.status(404).json({ error: `Nenhum ${tipo} cadastrado.` });
@@ -60,23 +61,22 @@ const buscarArquivo = (tipo) => async (req, res) => {
 const deletarArquivo = (tipo) => async (req, res) => {
     try {
         const { id } = req.params;
+        const idNumerico = parseInt(id); // Corrigido: garantindo que o ID é número
 
-        if (isNaN(id)) return res.status(400).json({ error: 'ID inválido.' });
+        if (isNaN(idNumerico)) return res.status(400).json({ error: 'ID inválido.' });
 
-        const exemplo = await ExemploModel.buscarPorId(parseInt(id));
+        const exemplo = await ExemploModel.buscarPorId(idNumerico);
 
         if (!exemplo) return res.status(404).json({ error: 'Registro não encontrado.' });
 
         if (!exemplo[tipo]) return res.status(404).json({ error: `Nenhum ${tipo} para remover.` });
 
         await deletarStorage(exemplo[tipo]);
-
-        exemplo[tipo] = null;
-
-        await exemplo.atualizar();
+        await ExemploModel.atualizar(idNumerico, { [tipo]: null });
 
         return res.status(200).json({ message: `${tipo} removido com sucesso!` });
     } catch (error) {
+        console.error('Erro ao deletar:', error);
         return res.status(500).json({ error: `Erro ao remover ${tipo}.` });
     }
 };

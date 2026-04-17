@@ -1,11 +1,13 @@
 import prisma from '../lib/services/prismaClient.js';
 
 export default class ExemploModel {
-    constructor({ id = null, nome, estado = true, preco = null } = {}) {
+    constructor({ id = null, nome, estado = true, preco = null, foto = null, documento = null} = {}) {
         this.id = id;
         this.nome = nome;
         this.estado = estado;
         this.preco = preco;
+        this.foto = foto;
+        this.documento = documento;
     }
 
     async criar() {
@@ -14,6 +16,8 @@ export default class ExemploModel {
                 nome: this.nome,
                 estado: this.estado,
                 preco: this.preco,
+                foto: this.foto,
+                documento: this.documento
             },
         });
     }
@@ -46,10 +50,9 @@ export default class ExemploModel {
     }
 
     static async buscarPorId(id) {
-        const data = await prisma.exemplo.findUnique({ where: { id } });
-        if (!data) {
-            return null;
-        }
+        const data = await prisma.exemplo.findUnique({ where: { id: parseInt(id) } });
+        if (!data) return null;
+        
         return new ExemploModel(data);
     }
 }
