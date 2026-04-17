@@ -63,6 +63,9 @@ export const buscarPorId = async (req, res) => {
 export const atualizar = async (req, res) => {
     try {
         const { id } = req.params;
+         const idNumerico = parseInt(id);
+
+        
 
         if (isNaN(id)) {
             return res.status(400).json({ error: 'ID inválido.' });
@@ -72,28 +75,30 @@ export const atualizar = async (req, res) => {
             return res.status(400).json({ error: 'Corpo da requisição vazio. Envie os dados!' });
         }
 
-        const exemplo = await ExemploModel.buscarPorId(parseInt(id));
-
-        if (!exemplo) {
+        const registroExistente = await ExemploModel.buscarPorId(idNumerico);
+        if (!registroExistente) {
             return res.status(404).json({ error: 'Registro não encontrado para atualizar.' });
         }
 
-        if (req.body.nome !== undefined) {
-            exemplo.nome = req.body.nome;
-        }
-        if (req.body.estado !== undefined) {
-            exemplo.estado = req.body.estado;
-        }
-        if (req.body.preco !== undefined) {
-            exemplo.preco = parseFloat(req.body.preco);
-        }
+        // 4. Prepara os dados para o banco (Garantindo tipos corretos)
+        const dadosParaAtualizar = {};
+        
+        if (req.body.nome !== undefined) dadosParaAtualizar.nome = req.body.nome;
+        if (req.body.estado !== undefined) dadosParaAtualizar.estado = req.body.estado;
+        if (req.body.preco !== undefined) dadosParaAtualizar.preco = parseFloat(req.body.preco);
+        
 
-        const data = await exemplo.atualizar();
+    
+        const data = await ExemploModel.atualizar(idNumerico, dadosParaAtualizar);
 
-        return res.status(200).json({ message: `O registro "${data.nome}" foi atualizado com sucesso!`, data });
+        return res.status(200).json({ 
+            message: `O registro "${data.nome}" foi atualizado com sucesso!`, 
+            data 
+        });
+
     } catch (error) {
-        console.error('Erro ao atualizar:', error);
-        return res.status(500).json({ error: 'Erro ao atualizar registro.' });
+        console.error('Erro ao atualizar no servidor:', error);
+        return res.status(500).json({ error: 'Erro ao atualizar registro interno.' });
     }
 };
 

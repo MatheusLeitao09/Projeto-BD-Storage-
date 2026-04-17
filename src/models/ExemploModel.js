@@ -23,11 +23,19 @@ export default class ExemploModel {
     }
 
     static async atualizar(id, dados) {
-        return prisma.exemplo.update({
-            where: { id: parseInt(id) },
-            data: dados
+    try {
+        // O Prisma precisa do ID como número e dos dados limpos
+        const registroAtualizado = await prisma.exemplo.update({
+            where: { id: Number(id) },
+            data: dados ,
+                
         });
+        return registroAtualizado;
+    } catch (error) {
+        console.error("Erro no Prisma ao atualizar:", error);
+        throw error; 
     }
+}
 
     async deletar() {
         return prisma.exemplo.delete({ where: { id: this.id } });
