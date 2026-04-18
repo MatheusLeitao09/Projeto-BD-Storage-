@@ -24,7 +24,7 @@ const uploadArquivo = (tipo) => async (req, res) => {
 
         // 2. SALVA NO BANCO (Usando o Model diretamente)
         // Certifique-se que seu ExemploModel tem a função atualizar(id, dados)
-        await ExemploModel.atualizar(idNumerico, { [tipo]: urlGerada });
+       await ExemploModel.atualizar(idNumerico, { [tipo]: urlGerada });
 
         // 3. RETORNA A URL GERADA (Não pode ser null!)
         return res.status(200).json({
